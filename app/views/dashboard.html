@@ -40,7 +40,7 @@
     .welcome-box p  { color: #8b949e; font-size: 0.9rem; }
 
     /* === XSS Reflection Container === */
-    /* Phase 3 flag: SCENARIO75{xss-payload} */
+    /* Phase 3 flag: SALIMLABS{xss-payload} */
     .xss-payload {
       background: #1c1c2e;
       border: 1px solid #6e40c9;
@@ -131,7 +131,7 @@
     <p>You have successfully authenticated. Session token: <span id="sess-tok" style="font-family:monospace;color:#58a6ff;"></span></p>
   </div>
 
-  <!-- XSS Reflection Container — Phase 3: SCENARIO75{xss-payload} -->
+  <!-- XSS Reflection Container — Phase 3: SALIMLABS{xss-payload} -->
   <div class="xss-payload-label">⚠ Feedback Preview (Last Submission)</div>
   <div class="xss-payload" id="xss-payload-container">
     <span style="color:#8b949e;font-size:0.85rem;">No recent feedback payload to display.</span>
@@ -160,14 +160,14 @@
     </table>
   </div>
 
-  <!-- Final CTF Flag — Phase 3: SCENARIO75{RED_C00k13_MFA_Byp4ss_0wn3d} -->
+  <!-- Final CTF Flag — Phase 3: SALIMLABS{S3SS10N_R3PL4Y_M4ST3R_0wn3d} -->
   <div class="flag-box">
     <h3>🚩 SYSTEM FLAG — RESTRICTED ACCESS</h3>
     <p style="color:#8b949e;font-size:0.85rem;margin-bottom:10px;">
       This flag is only accessible to authenticated administrators.<br>
       If you obtained this via session replay — you have successfully completed the Red Team challenge.
     </p>
-    <div class="flag-value">SCENARIO75{RED_C00k13_MFA_Byp4ss_0wn3d}</div>
+    <div class="flag-value">SALIMLABS{S3SS10N_R3PL4Y_M4ST3R_0wn3d}</div>
   </div>
 </div>
 
@@ -181,7 +181,7 @@
   document.getElementById('sess-tok').textContent = tok;
 
   // XSS Reflection: render last payload from URL hash or sessionStorage
-  // This is the intentional XSS sink — Phase 3: SCENARIO75{xss-payload}
+  // This is the intentional XSS sink — Phase 3: SALIMLABS{xss-payload}
   const urlParams = new URLSearchParams(window.location.search);
   const payload = urlParams.get('preview') || sessionStorage.getItem('last_payload');
   if (payload) {

@@ -27,7 +27,7 @@ const PORT = 3075;
 
 // ============================================================
 // INTENTIONAL: Expose backend technology via X-Powered-By
-// FLAG: SCENARIO75{Node.js}
+// FLAG: SALIMLABS{Node.js}
 // ============================================================
 app.set('x-powered-by', true);
 app.use((req, res, next) => {
@@ -41,7 +41,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ============================================================
-// robots.txt - FLAG: SCENARIO75{robots.txt}, SCENARIO75{/api/verify-mfa}, SCENARIO75{/dashboard}
+// robots.txt - FLAG: SALIMLABS{robots.txt}, SALIMLABS{/api/verify-mfa}, SALIMLABS{/dashboard}
 // ============================================================
 app.get('/robots.txt', (req, res) => {
   res.type('text/plain');
@@ -57,12 +57,12 @@ Disallow: /api/
 
 // ============================================================
 // Session initialization - sets pre_mfa_session cookie
-// FLAG: SCENARIO75{pre_mfa_session}, SCENARIO75{pending_mfa_verification}
+// FLAG: SALIMLABS{pre_mfa_session}, SALIMLABS{pending_mfa_verification}
 // ============================================================
 app.use((req, res, next) => {
   if (!req.cookies.pre_mfa_session && !req.cookies.adm_sess) {
     // INTENTIONAL: HttpOnly=False so XSS can steal it
-    // FLAG: SCENARIO75{False}
+    // FLAG: SALIMLABS{False}
     res.cookie('pre_mfa_session', 'pending_mfa_verification', {
       httpOnly: false,
       sameSite: 'lax',
@@ -75,6 +75,7 @@ app.use((req, res, next) => {
 // Routes
 app.use('/', require('./routes/main'));
 app.use('/api', require('./routes/api'));
+app.use('/mfa', require('./routes/mfa'));
 app.use('/dashboard', require('./routes/dashboard'));
 
 app.listen(PORT, '0.0.0.0', () => {

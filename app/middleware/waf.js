@@ -8,11 +8,11 @@ const fs = require('fs');
 // ============================================================
 // Rudimentary WAF Middleware
 // FLAGS:
-//   SCENARIO75{POST}         - feedback only via POST
-//   SCENARIO75{403}          - blocks <script> with 403
-//   SCENARIO75{<svg>}        - bypassable via <svg onload=...>
-//   SCENARIO75{window['docu'+'ment']['coo'+'kie']} - cookie obfuscation bypass
-//   SCENARIO75{fetch}        - fetch API allowed for exfiltration
+//   SALIMLABS{POST}         - feedback only via POST
+//   SALIMLABS{403}          - blocks <script> with 403
+//   SALIMLABS{<svg>}        - bypassable via <svg onload=...>
+//   SALIMLABS{window['docu'+'ment']['coo'+'kie']} - cookie obfuscation bypass
+//   SALIMLABS{fetch}        - fetch API allowed for exfiltration
 // ============================================================
 
 const BLOCKED_PATTERNS = [

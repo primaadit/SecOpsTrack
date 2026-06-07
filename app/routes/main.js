@@ -27,7 +27,7 @@ const feedbacks = [
 // ============================================================
 // GET / - Main feedback page
 // Contains ASCII art hint in HTML source
-// FLAG: SCENARIO75{robots.txt}
+// FLAG: SALIMLABS{robots.txt}
 // ============================================================
 router.get('/', isAuthenticated, (req, res) => {
   const feedbackList = feedbacks.map(f =>
@@ -194,7 +194,7 @@ router.get('/login', (req, res) => {
 
 // ============================================================
 // POST /api/feedback - Feedback submission (WAF protected)
-// FLAG: SCENARIO75{POST}
+// FLAG: SALIMLABS{POST}
 // ============================================================
 router.post('/api/feedback', wafMiddleware, (req, res) => {
   const { name, message } = req.body;

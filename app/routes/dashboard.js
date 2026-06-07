@@ -12,10 +12,10 @@ const fs = require('fs');
 // GET /dashboard
 // Requires valid adm_sess cookie (bypasses MFA via session replay)
 // FLAGS:
-//   SCENARIO75{/dashboard}
-//   SCENARIO75{xss-payload}  - CSS class name for XSS reflection
-//   SCENARIO75{RED_C00k13_MFA_Byp4ss_0wn3d} - final red flag
-//   SCENARIO75{CRITICAL}     - log level for cookie reuse
+//   SALIMLABS{/dashboard}
+//   SALIMLABS{xss-payload}  - CSS class name for XSS reflection
+//   SALIMLABS{S3SS10N_R3PL4Y_M4ST3R_0wn3d} - final red flag
+//   SALIMLABS{CRITICAL}     - log level for cookie reuse
 // ============================================================
 router.get('/', requireAdmin, (req, res) => {
   const cookieValue = req.cookies.adm_sess || '';
@@ -98,7 +98,7 @@ router.get('/', requireAdmin, (req, res) => {
   <div class="card">
     <h2>🚩 System Flag</h2>
     <div class="flag-box">
-      SCENARIO75{RED_C00k13_MFA_Byp4ss_0wn3d}
+      SALIMLABS{S3SS10N_R3PL4Y_M4ST3R_0wn3d}
     </div>
     <p style="color:#606080;font-size:0.8rem;margin-top:8px;">
       Congratulations. You have successfully demonstrated session cookie replay to bypass MFA authentication.
@@ -108,7 +108,7 @@ router.get('/', requireAdmin, (req, res) => {
   <div class="card">
     <h2>🔍 XSS Payload Reflection</h2>
     <p style="color:#606080;font-size:0.8rem;margin-bottom:12px;">Last injected payload from feedback form:</p>
-    <!-- FLAG: SCENARIO75{xss-payload} — this CSS class name is the flag -->
+    <!-- FLAG: SALIMLABS{xss-payload} — this CSS class name is the flag -->
     <div class="xss-payload">
       ${xssPayload || '<span style="color:#404060">No XSS payload detected in current session. Submit a payload via the feedback form.</span>'}
     </div>

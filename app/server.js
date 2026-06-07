@@ -42,7 +42,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-// X-Powered-By intentionally exposed — Phase 1 flag: SCENARIO75{Node.js}
+// X-Powered-By intentionally exposed — Phase 1 flag: SALIMLABS{Node.js}
 // Express sets this by default; we make it explicit
 app.use((req, res, next) => {
   res.setHeader('X-Powered-By', 'Node.js');
@@ -51,8 +51,8 @@ app.use((req, res, next) => {
 
 // =====================================================================
 // RUDIMENTARY WAF MIDDLEWARE
-// Phase 2 flags: SCENARIO75{403}, SCENARIO75{<svg>},
-//                SCENARIO75{window['docu'+'ment']['coo'+'kie']}
+// Phase 2 flags: SALIMLABS{403}, SALIMLABS{<svg>},
+//                SALIMLABS{window['docu'+'ment']['coo'+'kie']}
 // =====================================================================
 const wafMiddleware = require('./middleware/waf');
 app.use('/api/feedback', wafMiddleware(errorLogStream));
@@ -67,7 +67,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // =====================================================================
 
 // --- robots.txt ---
-// Phase 1 flags: SCENARIO75{/api/verify-mfa}, SCENARIO75{robots.txt}
+// Phase 1 flags: SALIMLABS{/api/verify-mfa}, SALIMLABS{robots.txt}
 app.get('/robots.txt', (req, res) => {
   res.type('text/plain');
   res.send(
@@ -80,11 +80,11 @@ app.get('/robots.txt', (req, res) => {
 
 // --- Home / Login page ---
 // On first visit, issue pre_mfa_session cookie
-// Phase 1 flags: SCENARIO75{pre_mfa_session}, SCENARIO75{pending_mfa_verification}
+// Phase 1 flags: SALIMLABS{pre_mfa_session}, SALIMLABS{pending_mfa_verification}
 app.get('/', (req, res) => {
   if (!req.cookies['pre_mfa_session']) {
     res.cookie('pre_mfa_session', 'pending_mfa_verification', {
-      httpOnly: false,   // Phase 2 flag: SCENARIO75{False}
+      httpOnly: false,   // Phase 2 flag: SALIMLABS{False}
       sameSite: 'Lax',
       path: '/'
     });
@@ -93,7 +93,7 @@ app.get('/', (req, res) => {
 });
 
 // --- Feedback submission endpoint (POST only) ---
-// Phase 2 flag: SCENARIO75{POST}
+// Phase 2 flag: SALIMLABS{POST}
 app.post('/api/feedback', (req, res) => {
   const { name, message } = req.body;
   // Store feedback in memory (simulated)
@@ -108,7 +108,7 @@ app.get('/api/feedback', (req, res) => {
 });
 
 // --- MFA Verification endpoint ---
-// Phase 1 flag: SCENARIO75{/api/verify-mfa}
+// Phase 1 flag: SALIMLABS{/api/verify-mfa}
 app.post('/api/verify-mfa', (req, res) => {
   const { mfa_code } = req.body;
   const preSession = req.cookies['pre_mfa_session'];
@@ -119,7 +119,7 @@ app.post('/api/verify-mfa', (req, res) => {
 
   // Simulate MFA: accept any 6-digit code for demo
   if (mfa_code && /^\d{6}$/.test(mfa_code)) {
-    // Issue admin session — Phase 3 flag: SCENARIO75{adm_sess}
+    // Issue admin session — Phase 3 flag: SALIMLABS{adm_sess}
     const adminSessionToken = 'adm_sess_' + Buffer.from('admin:' + Date.now()).toString('base64');
     res.cookie('pre_mfa_session', adminSessionToken, {
       httpOnly: false,
@@ -147,13 +147,13 @@ app.post('/api/login', (req, res) => {
 });
 
 // --- Dashboard (protected) ---
-// Phase 3 flags: SCENARIO75{/dashboard}, SCENARIO75{adm_sess},
-//                SCENARIO75{xss-payload}, SCENARIO75{RED_C00k13_MFA_Byp4ss_0wn3d}
+// Phase 3 flags: SALIMLABS{/dashboard}, SALIMLABS{adm_sess},
+//                SALIMLABS{xss-payload}, SALIMLABS{RED_C00k13_MFA_Byp4ss_0wn3d}
 app.get('/dashboard', (req, res) => {
   const sessionCookie = req.cookies['pre_mfa_session'];
 
   // MFA BYPASS: if cookie starts with adm_sess, skip /api/verify-mfa entirely
-  // Phase 3 flag: SCENARIO75{/api/verify-mfa} (bypass path)
+  // Phase 3 flag: SALIMLABS{/api/verify-mfa} (bypass path)
   if (sessionCookie && sessionCookie.startsWith('adm_sess')) {
     // Log CRITICAL cookie reuse
     const critMsg = `[${new Date().toISOString()}] [CRITICAL] Cookie reuse / session replay detected. Token: ${sessionCookie} from IP: ${req.ip}\n`;

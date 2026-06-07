@@ -6,8 +6,8 @@
 // ============================================================
 // Auth Middleware
 // FLAGS:
-//   SCENARIO75{adm_sess}            - admin session prefix
-//   SCENARIO75{/api/verify-mfa}     - MFA endpoint is SKIPPED on cookie replay
+//   SALIMLABS{adm_sess}            - admin session prefix
+//   SALIMLABS{/api/verify-mfa}     - MFA endpoint is SKIPPED on cookie replay
 // ============================================================
 
 // Hardcoded admin session for demo (intentional vulnerability)
@@ -23,7 +23,7 @@ function requireAdmin(req, res, next) {
   if (adminCookie && adminCookie.startsWith('adm_sess')) {
     // INTENTIONAL: Cookie replay bypass - MFA is completely skipped
     // if a valid adm_sess cookie is presented
-    // FLAG: SCENARIO75{/api/verify-mfa} - this endpoint is never called
+    // FLAG: SALIMLABS{/api/verify-mfa} - this endpoint is never called
     req.adminUser = { username: 'admin', role: 'administrator' };
     return next();
   }
