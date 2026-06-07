@@ -10,7 +10,7 @@ SecOpsTrack is a self-contained Red vs Blue CTF cyber range lab by SalimLabs. Bu
 ## 📁 Project Structure
 
 ```
-ctf-lab/
+SecOpsTrack/
 ├── app/
 │   ├── Dockerfile
 │   ├── package.json
