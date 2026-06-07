@@ -1,7 +1,9 @@
-# 🔴🔵 Red vs Blue CTF Lab — Cookies Reuse & MFA Bypass
-> Built by Prima Praditya | [linkedin.com/in/primaadit](https://linkedin.com/in/primaadit)
+# 🔴🔵 SecOpsTrack — Red vs Blue Cyber Range
+> **by SalimLabs** | Built by Prima Praditya (CEH) | [linkedin.com/in/primaadit](https://linkedin.com/in/primaadit)
 
-**Cookies Reuse & MFA Bypass Scenario**
+**Scenario: Session Hijacking & MFA Bypass**
+
+SecOpsTrack is a self-contained Red vs Blue CTF cyber range lab by SalimLabs. Built for hands-on offensive and defensive security training.
 
 > **Scenario:** Internal security audits identified a critical flaw in a corporate "Admin Feedback System." MFA is enforced but session logic is flawed. Red Team exploits via XSS → session replay; Blue Team performs incident response via log forensics.
 
@@ -38,8 +40,8 @@ ctf-lab/
 
 ### One-Command Deploy
 ```bash
-git clone https://github.com/primaadit/ctf-lab.git
-cd ctf-lab
+git clone https://github.com/primaadit/SecOpsTrack.git
+cd SecOpsTrack
 sudo bash scripts/setup.sh
 ```
 
